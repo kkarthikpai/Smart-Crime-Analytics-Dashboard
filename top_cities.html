@@ -6,7 +6,9 @@
     <title>Top Cities by Crime - Dashboard</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    
     <style>
+        /* Shared CSS styles (kept consistent with other files) */
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; }
         .navbar { display: flex; justify-content: space-between; align-items: center; background: #1a237e; padding: 10px 20px; color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 20; }
         .navbar h1 { margin: 0; font-size: 24px; font-weight: 600; }
@@ -56,125 +58,76 @@
 
     <div class="dashboard-container">
         <div class="chart-card">
-            <h4>Top 10 Cities by Total Crime Incidents</h4>
+            <h4>Top 10 Metropolitan Cities by Total Cognizable IPC Crime Incidents</h4>
             <canvas id="topCitiesChart"></canvas>
         </div>
     </div>
 
     <script>
-        // --- EMBED FULL DATA ---
-        const CSV_DATA = `Report Number,Date Reported,Date of Occurrence,Time of Occurrence,City,Crime Code,Crime Description,Victim Age,Victim Gender,Weapon Used,Crime Domain,Police Deployed,Case Closed,Date Case Closed
-1,02-01-2020 00:00,01-01-2020 00:00,01-01-2020 01:11,Ahmedabad,576,IDENTITY THEFT,16,M,Blunt Object,Violent Crime,13,No,
-2,01-01-2020 19:00,01-01-2020 01:00,01-01-2020 06:26,Chennai,128,HOMICIDE,37,M,Poison,Other Crime,9,No,
-3,02-01-2020 05:00,01-01-2020 02:00,01-01-2020 14:30,Ludhiana,271,KIDNAPPING,48,F,Blunt Object,Other Crime,15,No,
-4,01-01-2020 05:00,01-01-2020 03:00,01-01-2020 14:46,Pune,170,BURGLARY,49,F,Firearm,Other Crime,1,Yes,29-04-2020 05:00
-5,01-01-2020 21:00,01-01-2020 04:00,01-01-2020 16:51,Pune,421,VANDALISM,30,F,Other,Other Crime,18,Yes,08-01-2020 21:00
-6,02-01-2020 03:00,01-01-2020 05:00,01-01-2020 17:09,Delhi,442,ASSAULT,16,M,Firearm,Violent Crime,18,Yes,30-03-2020 03:00
-7,01-01-2020 16:00,01-01-2020 06:00,01-01-2020 14:08,Chennai,172,VEHICLE - STOLEN,64,F,Knife,Violent Crime,13,Yes,24-03-2020 16:00
-8,02-01-2020 10:00,01-01-2020 07:00,02-01-2020 06:33,Chennai,169,COUNTERFEITING,78,X,Knife,Other Crime,8,No,
-9,04-01-2020 03:00,01-01-2020 08:00,02-01-2020 06:34,Mumbai,338,EXTORTION,41,X,Blunt Object,Other Crime,1,No,
-10,03-01-2020 07:00,01-01-2020 09:00,01-01-2020 17:50,Chennai,497,PUBLIC INTOXICATION,29,M,Knife,Other Crime,4,No,
-11,02-01-2020 13:00,01-01-2020 10:00,01-01-2020 19:42,Delhi,260,FRAUD,71,M,Explosives,Other Crime,5,Yes,01-02-2020 13:00
-12,03-01-2020 09:00,01-01-2020 11:00,01-01-2020 22:16,Surat,563,IDENTITY THEFT,26,M,Poison,Violent Crime,3,No,
-13,01-01-2020 16:00,01-01-2020 12:00,01-01-2020 23:14,Visakhapatnam,498,FRAUD,36,F,Poison,Other Crime,3,Yes,29-02-2020 16:00
-14,02-01-2020 22:00,01-01-2020 13:00,01-01-2020 17:46,Mumbai,436,ASSAULT,32,X,None,Violent Crime,18,No,
-15,02-01-2020 00:00,01-01-2020 14:00,01-01-2020 22:28,Bangalore,266,SEXUAL ASSAULT,77,F,None,Violent Crime,19,No,
-16,02-01-2020 07:00,01-01-2020 15:00,01-01-2020 18:54,Kolkata,357,COUNTERFEITING,51,F,Explosives,Other Crime,16,Yes,30-03-2020 07:00
-17,03-01-2020 07:00,01-01-2020 16:00,02-01-2020 02:57,Ghaziabad,509,DRUG OFFENSE,61,M,Poison,Other Crime,6,No,
-18,04-01-2020 02:00,01-01-2020 17:00,01-01-2020 23:09,Pune,342,ARSON,64,F,Other,Fire Accident,2,No,
-19,02-01-2020 20:00,01-01-2020 18:00,02-01-2020 10:42,Bangalore,480,CYBERCRIME,11,M,None,Other Crime,3,Yes,24-01-2020 20:00
-20,03-01-2020 18:00,01-01-2020 19:00,02-01-2020 18:02,Bangalore,369,EXTORTION,62,F,Blunt Object,Other Crime,2,Yes,05-03-2020 18:00
-21,03-01-2020 22:00,01-01-2020 20:00,02-01-2020 02:33,Hyderabad,251,TRAFFIC VIOLATION,50,F,Poison,Traffic Fatality,14,Yes,22-01-2020 22:00
-22,03-01-2020 12:00,01-01-2020 21:00,02-01-2020 10:11,Mumbai,374,VANDALISM,64,F,Other,Other Crime,15,Yes,03-03-2020 12:00
-23,02-01-2020 10:00,01-01-2020 22:00,01-01-2020 22:03,Jaipur,507,SHOPLIFTING,69,F,Blunt Object,Other Crime,13,No,
-24,03-01-2020 09:00,01-01-2020 23:00,01-01-2020 23:40,Chennai,322,VANDALISM,77,F,Other,Other Crime,18,No,
-25,03-01-2020 01:00,01-02-2020 00:00,02-01-2020 20:47,Bangalore,527,DRUG OFFENSE,18,F,Other,Other Crime,1,No,
-26,02-01-2020 16:00,01-02-2020 01:00,02-01-2020 08:21,Jaipur,282,ASSAULT,60,M,Firearm,Violent Crime,15,Yes,12-03-2020 16:00
-27,02-01-2020 06:00,01-02-2020 02:00,02-01-2020 04:02,Pune,247,IDENTITY THEFT,49,M,Blunt Object,Violent Crime,13,No,
-28,02-01-2020 15:00,01-02-2020 03:00,02-01-2020 20:11,Lucknow,489,PUBLIC INTOXICATION,41,F,None,Other Crime,7,No,
-29,04-01-2020 14:00,01-02-2020 04:00,02-01-2020 19:56,Bangalore,387,VANDALISM,33,F,Explosives,Other Crime,19,No,
-30,04-01-2020 23:00,01-02-2020 05:00,02-01-2020 09:35,Bhopal,517,BURGLARY,37,F,None,Other Crime,4,No,
-31,03-01-2020 07:00,01-02-2020 06:00,02-01-2020 13:06,Bhopal,570,HOMICIDE,32,F,Explosives,Other Crime,13,No,
-32,04-01-2020 13:00,01-02-2020 07:00,02-01-2020 15:05,Hyderabad,222,VANDALISM,60,M,Knife,Other Crime,3,Yes,18-03-2020 13:00
-33,03-01-2020 04:00,01-02-2020 08:00,03-01-2020 03:01,Delhi,319,ILLEGAL POSSESSION,73,F,Knife,Other Crime,19,No,
-34,05-01-2020 07:00,01-02-2020 09:00,03-01-2020 02:40,Patna,575,VEHICLE - STOLEN,24,F,Explosives,Violent Crime,6,No,
-35,04-01-2020 21:00,01-02-2020 10:00,02-01-2020 22:18,Kanpur,341,VANDALISM,34,F,Other,Other Crime,14,No,
-36,04-01-2020 21:00,01-02-2020 11:00,02-01-2020 17:48,Chennai,396,COUNTERFEITING,32,F,Blunt Object,Other Crime,11,No,
-37,03-01-2020 05:00,01-02-2020 12:00,03-01-2020 00:18,Lucknow,187,SEXUAL ASSAULT,33,F,Blunt Object,Violent Crime,9,Yes,02-07-2020 05:00
-38,04-01-2020 05:00,01-02-2020 13:00,02-01-2020 18:04,Varanasi,280,SHOPLIFTING,22,F,Explosives,Other Crime,14,No,
-39,03-01-2020 23:00,01-02-2020 14:00,02-01-2020 21:24,Surat,487,VEHICLE - STOLEN,32,F,None,Violent Crime,13,Yes,11-03-2020 23:00
-40,03-01-2020 02:00,01-02-2020 15:00,03-01-2020 14:05,Mumbai,154,FRAUD,69,F,Explosives,Other Crime,10,Yes,15-01-2020 02:00
-41,05-01-2020 01:00,01-02-2020 16:00,03-01-2020 01:51,Visakhapatnam,148,HOMICIDE,28,F,Firearm,Other Crime,2,No,
-42,03-01-2020 11:00,01-02-2020 17:00,03-01-2020 11:09,Surat,583,ILLEGAL POSSESSION,42,M,Blunt Object,Other Crime,6,No,
-43,03-01-2020 03:00,01-02-2020 18:00,03-01-2020 09:30,Delhi,172,FIREARM OFFENSE,40,M,Poison,Fire Accident,10,Yes,17-03-2020 03:00
-44,04-01-2020 07:00,01-02-2020 19:00,03-01-2020 08:34,Mumbai,300,SEXUAL ASSAULT,44,M,Other,Violent Crime,7,No,
-45,05-01-2020 19:00,01-02-2020 20:00,03-01-2020 06:22,Kolkata,387,ARSON,44,F,Blunt Object,Fire Accident,10,Yes,12-01-2020 19:00
-46,04-01-2020 19:00,01-02-2020 21:00,03-01-2020 09:02,Patna,297,DRUG OFFENSE,67,M,Knife,Other Crime,8,No,
-47,05-01-2020 04:00,01-02-2020 22:00,03-01-2020 09:55,Delhi,555,ROBBERY,47,F,None,Violent Crime,9,No,
-48,05-01-2020 17:00,01-02-2020 23:00,03-01-2020 03:42,Lucknow,128,FIREARM OFFENSE,38,F,Blunt Object,Fire Accident,14,Yes,14-03-2020 17:00
-49,05-01-2020 19:00,01-03-2020 00:00,03-01-2020 02:59,Jaipur,139,ILLEGAL POSSESSION,77,F,Firearm,Other Crime,17,No,
-50,03-01-2020 13:00,01-03-2020 01:00,03-01-2020 06:06,Hyderabad,561,DRUG OFFENSE,37,F,Blunt Object,Other Crime,7,No,
-51,03-01-2020 05:00,01-03-2020 02:00,03-01-2020 17:10,Nagpur,573,BURGLARY,54,F,Other,Other Crime,12,Yes,13-04-2020 05:00
-52,05-01-2020 12:00,01-03-2020 03:00,03-01-2020 19:13,Kolkata,260,BURGLARY,38,F,Blunt Object,Other Crime,5,Yes,14-04-2020 12:00
-53,05-01-2020 00:00,01-03-2020 04:00,03-01-2020 22:01,Ghaziabad,211,PUBLIC INTOXICATION,29,M,Poison,Other Crime,15,Yes,20-01-2020 00:00
-54,05-01-2020 10:00,01-03-2020 05:00,03-01-2020 18:47,Delhi,312,BURGLARY,75,M,Explosives,Other Crime,2,No,
-55,06-01-2020 02:00,01-03-2020 06:00,03-01-2020 07:47,Pune,548,FIREARM OFFENSE,61,F,Poison,Fire Accident,5,No,
-56,04-01-2020 04:00,01-03-2020 07:00,03-01-2020 11:11,Meerut,596,BURGLARY,49,F,None,Other Crime,19,No,
-57,06-01-2020 01:00,01-03-2020 08:00,03-01-2020 20:16,Kanpur,188,SEXUAL ASSAULT,67,F,Firearm,Violent Crime,8,Yes,20-07-2020 01:00
-58,03-01-2020 18:00,01-03-2020 09:00,03-01-2020 09:43,Ahmedabad,110,ASSAULT,70,F,None,Violent Crime,15,No,
-59,04-01-2020 14:00,01-03-2020 10:00,04-01-2020 02:40,Chennai,449,TRAFFIC VIOLATION,75,F,Blunt Object,Traffic Fatality,16,No,
-60,05-01-2020 18:00,01-03-2020 11:00,04-01-2020 05:33,Thane,352,SHOPLIFTING,53,F,Other,Other Crime,6,Yes,31-03-2020 18:00
-61,03-01-2020 22:00,01-03-2020 12:00,03-01-2020 15:04,Mumbai,196,SHOPLIFTING,16,M,Poison,Other Crime,10,No,
-62,05-01-2020 21:00,01-03-2020 13:00,04-01-2020 03:32,Surat,359,DRUG OFFENSE,30,M,Explosives,Other Crime,9,Yes,09-02-2020 21:00
-63,03-01-2020 20:00,01-03-2020 14:00,04-01-2020 09:27,Chennai,495,FRAUD,56,M,Explosives,Other Crime,5,Yes,15-03-2020 20:00
-64,06-01-2020 06:00,01-03-2020 15:00,04-01-2020 00:59,Thane,259,ILLEGAL POSSESSION,19,F,Blunt Object,Other Crime,16,Yes,20-03-2020 06:00
-65,05-01-2020 18:00,01-03-2020 16:00,04-01-2020 00:59,Visakhapatnam,289,DRUG OFFENSE,58,F,Explosives,Other Crime,19,No,
-66,06-01-2020 14:00,01-03-2020 17:00,04-01-2020 11:49,Lucknow,409,EXTORTION,45,F,Other,Other Crime,3,Yes,15-03-2020 14:00
-67,03-01-2020 21:00,01-03-2020 18:00,04-01-2020 17:48,Bhopal,306,CYBERCRIME,25,M,None,Other Crime,6,No,
-68,04-01-2020 20:00,01-03-2020 19:00,04-01-2020 08:46,Visakhapatnam,420,BURGLARY,22,M,Knife,Other Crime,17,Yes,02-05-2020 20:00
-69,06-01-2020 09:00,01-03-2020 20:00,04-01-2020 02:24,Hyderabad,469,PUBLIC INTOXICATION,59,F,Explosives,Other Crime,8,Yes,17-01-2020 09:00
-70,06-01-2020 12:00,01-03-2020 21:00,04-01-2020 17:23,Visakhapatnam,292,FIREARM OFFENSE,31,F,Firearm,Fire Accident,1,
-40150,31-07-2024 19:00,07-30-2024 21:00,31-07-2024 15:43,Mumbai,161,PUBLIC INTOXICATION,37,M,Other,Other Crime,8,Yes,16-08-2024 19:00
-40151,01-08-2024 23:00,07-30-2024 22:00,31-07-2024 19:41,Mumbai,430,TRAFFIC VIOLATION,47,F,Knife,Traffic Fatality,6,No,
-40152,01-08-2024 00:00,07-30-2024 23:00,30-07-2024 23:10,Mumbai,106,KIDNAPPING,42,F,None,Other Crime,1,Yes,25-10-2024 00:00`;
-
-        function renderChart() {
-            const lines = CSV_DATA.trim().split('\n').slice(1);
-            const CITY_COL = 4;
-            const cityCounts = {};
+        const renderChart = () => {
+            // --- EMBEDDED DATA (Total IPC Incidence from the new CSV) ---
+            const topCities = [
+                { label: 'Delhi City', count: 298988 },
+                { label: 'Mumbai (Maharashtra)', count: 69289 },
+                { label: 'Bengaluru (Karnataka)', count: 28666 },
+                { label: 'Jaipur (Rajasthan)', count: 28171 },
+                { label: 'Ahmedabad (Gujarat)', count: 22872 },
+                { label: 'Hyderabad (Telangana)', count: 20668 },
+                { label: 'Indore (Madhya Pradesh)', count: 16636 },
+                { label: 'Lucknow (Uttar Pradesh)', count: 15115 },
+                { label: 'Chennai (Tamil Nadu)', count: 15086 },
+                { label: 'Kochi (Kerala)', count: 13273 }
+            ];
+            // --- END OF EMBEDDED DATA ---
             
-            lines.forEach(line => {
-                const columns = line.split(',');
-                if (columns.length < 14) return;
-                const city = columns[CITY_COL].trim();
-                cityCounts[city] = (cityCounts[city] || 0) + 1;
-            });
+            const labels = topCities.map(c => c.label);
+            const dataCounts = topCities.map(c => c.count);
 
-            const topCities = Object.entries(cityCounts)
-                .sort(([, countA], [, countB]) => countB - countA)
-                .slice(0, 10)
-                .map(([label, count]) => ({ label, count }));
-
-            const CHART_COLORS = ['rgba(67, 160, 71, 0.8)'];
+            // Chart Color: Green for location/hotspot data
+            const CHART_COLOR = 'rgba(67, 160, 71, 0.8)';
 
             const cityCtx = document.getElementById('topCitiesChart').getContext('2d');
             new Chart(cityCtx, {
                 type: 'bar',
                 data: {
-                    labels: topCities.map(c => c.label),
+                    labels: labels,
                     datasets: [{
-                        label: 'Total Incidents',
-                        data: topCities.map(c => c.count),
-                        backgroundColor: CHART_COLORS[0],
-                        borderColor: CHART_COLORS[0].replace('0.8', '1'),
+                        label: 'Total IPC Incidents',
+                        data: dataCounts,
+                        backgroundColor: CHART_COLOR,
+                        borderColor: CHART_COLOR.replace('0.8', '1'),
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true } },
-                    plugins: { legend: { display: false } }
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            title: { display: true, text: 'Total Incidents' }
+                        },
+                        x: {
+                            title: { display: true, text: 'City' }
+                        }
+                    },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toLocaleString();
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
