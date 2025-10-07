@@ -17,4 +17,5 @@ The Smart Crime Analytics Dashboard project aims to shift law enforcement toward
 * K Karthik Pai
 * Ajay Bhat
 * Sanjeev N M
-* PVPK Karthik
+* P V P K Karthik
+
