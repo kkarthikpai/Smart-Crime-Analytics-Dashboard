@@ -3,108 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>Smart Crime Analytics Dashboard - About</title>
+    
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Shared Navbar and Body Styles */
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1a237e; padding: 10px 20px; color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 20; }
+        .navbar h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-links a { color: white; text-decoration: none; font-size: 16px; transition: color 0.3s; }
+        .nav-links a:hover { color: #a5d6a7; }
+        .dropdown { position: relative; display: inline-block; }
+        .dropbtn { background: none; border: none; color: white; font-size: 16px; cursor: pointer; padding: 0; }
+        .dropdown-content { display: none; position: absolute; background: white; min-width: 200px; box-shadow: 0px 8px 16px rgba(0,0,0,0.2); z-index: 10; right: 0; }
+        .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; }
+        .dropdown-content a:hover { background: #e0e0e0; }
+        .dropdown:hover .dropdown-content { display: block; }
+        /* End Nav Styles */
+
+        /* Original About Page Content Styles */
+        .content-container {
             line-height: 1.7;
             color: #333;
             max-width: 900px;
-            margin: 0 auto;
-            padding: 0;
-            background-color: #f0f0f5; /* Light background for the page */
-        }
-        
-        /* --- Navbar Styles --- */
-        header {
-            background-color: #0056b3;
-            padding: 10px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        nav {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: flex-start;
-            padding: 0 30px;
-        }
-        nav a {
-            color: #ffffff;
-            text-decoration: none;
-            padding: 8px 15px;
-            margin-right: 15px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        nav a:hover {
-            background-color: #004494;
-        }
-        nav a.current {
-            background-color: #004494;
-            font-weight: bold;
-        }
-        
-        /* --- Content Styles --- */
-        .container {
-            background-color: #fff;
+            margin: 30px auto;
             padding: 30px;
-            border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin: 30px auto; /* Add space around the main content box */
-            margin-top: 0; /* Align with header */
+            background-color: #ffffff; 
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
-        h2 {
-            color: #0056b3;
-            border-bottom: 3px solid #0056b3;
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 1.8em;
-            font-weight: 600;
-        }
-        h3 {
-            color: #363636;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.4em;
-            font-weight: 500;
-        }
-        p {
-            margin-bottom: 25px;
-        }
-        strong {
-            color: #000;
-            font-weight: 700;
-        }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-            padding-left: 0;
-        }
-        ul li {
-            margin-bottom: 10px;
-            padding-left: 5px;
-        }
+        h2 { color: #1a237e; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-top: 20px; font-size: 26px; }
+        h3 { color: #1a237e; margin-top: 20px; font-size: 20px; }
+        ul { list-style: disc; margin-left: 20px; padding: 10px 0; }
+        li { margin-bottom: 5px; }
     </style>
 </head>
 <body>
-
-    <header>
-        <nav>
+    
+    <div class="navbar">
+        <h1>Smart Crime Analytics Dashboard</h1>
+        <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="#" class="current">About</a> 
-            </nav>
-    </header>
-
-    <div class="container">
-        <h2>Smart Crime Analytics Dashboard: About the Project</h2>
-
+            <div class="dropdown">
+                <button class="dropbtn">Analytics ▼</button>
+                <div class="dropdown-content">
+                    <a href="yearly_trend.html">Crime Trend (Yearly)</a>
+                    <a href="top_crimes.html">Top Crime Types</a>
+                    <a href="top_cities.html">City Hotspots</a>
+                    <a href="district_analysis.html">District Analysis</a> 
+                </div>
+            </div>
+            <a href="about.html" style="background: rgba(255, 255, 255, 0.2); color: #a5d6a7; font-weight: bold;">About</a>
+        </div>
+    </div>
+    <div class="content-container">
+        <h2>About Smart Crime Analytics</h2>
         <p>
-            The <strong>Smart Crime Analytics Dashboard</strong> project is designed to fundamentally change how law enforcement agencies address the complex challenge of <strong>Urban Crime</strong>. Historically, crime-fighting relied on methods that were reactive, manual, and fragmented. This project aims to pivot to a <strong>smart, data-driven approach</strong>, enabling agencies to shift their focus from simply responding to incidents toward <strong>proactive prevention</strong> and strategic resource management. By transforming raw crime data into actionable intelligence, the dashboard provides the essential tools for a more informed and efficient public safety strategy.
+            This platform is dedicated to providing clear, actionable insights into crime statistics across India's major metropolitan cities and districts. Our goal is to transform raw data from sources like the National Crime Records Bureau (NCRB) into meaningful visualizations that support law enforcement, policymakers, and public safety initiatives.
         </p>
 
-        <h3>Data Processing & Analytics Methodology</h3>
+        <h3>Analytical Approach</h3>
         <p>
-            The intelligence of the dashboard is powered by a robust methodology that operates on three integrated levels, ensuring a comprehensive view of crime data:
+            We leverage multiple layers of analytics to provide a comprehensive view of crime dynamics:
         </p>
         <ul>
             <li><strong>Descriptive Analytics:</strong> Examines past crime data to uncover historical trends, geographic patterns, and seasonal fluctuations.</li>

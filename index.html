@@ -12,12 +12,40 @@
         .navbar h1 { margin: 0; font-size: 24px; font-weight: 600; }
         .nav-links { display: flex; gap: 25px; }
         .nav-links a { color: white; text-decoration: none; font-size: 16px; transition: color 0.3s; }
-        .nav-links a:hover { color: #a5d6a7; }
+        
+        /* FIX: Changed hover color to light blue and added active classes */
+        .nav-links a:hover { color: #c5cae9; } 
+        
+        /* Style for the active main link (Home, About) */
+        .nav-links .active {
+            color: #a5d6a7; 
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+        /* Prevent active link from changing on hover/touch */
+        .nav-links .active:hover {
+            color: #a5d6a7;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         .dropdown { position: relative; display: inline-block; }
         .dropbtn { background: none; border: none; color: white; font-size: 16px; cursor: pointer; padding: 0; }
         .dropdown-content { display: none; position: absolute; background: white; min-width: 200px; box-shadow: 0px 8px 16px rgba(0,0,0,0.2); z-index: 10; right: 0; }
         .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; }
         .dropdown-content a:hover { background: #e0e0e0; }
+
+        /* Style for the active link INSIDE the dropdown */
+        .dropdown-content .active-dropdown {
+            background: #e0e0e0; 
+            color: #1a237e; 
+            font-weight: bold;
+        }
+        /* Prevent active dropdown link from changing on hover */
+        .dropdown-content .active-dropdown:hover {
+            background: #e0e0e0;
+            color: #1a237e;
+        }
+        
         .dropdown:hover .dropdown-content { display: block; }
         .home { text-align: center; padding: 40px 20px 20px; background: white; border-bottom: 1px solid #ddd; }
         .home h2 { font-size: 32px; color: #1a237e; margin-bottom: 10px; }
@@ -55,7 +83,7 @@
         .metric-card p {
             font-size: 28px;
             font-weight: 700;
-            color: #d32f2f; /* Highlight the main metric */
+            color: #d32f2f; 
             margin: 0;
         }
 
@@ -72,13 +100,14 @@
     <div class="navbar">
         <h1>Smart Crime Analytics Dashboard</h1>
         <div class="nav-links">
-            <a href="index.html">Home</a>
+            <a href="index.html" class="active">Home</a>
             <div class="dropdown">
                 <button class="dropbtn">Analytics ▼</button>
                 <div class="dropdown-content">
                     <a href="yearly_trend.html">Crime Trend (Yearly)</a>
                     <a href="top_crimes.html">Top Crime Types</a>
                     <a href="top_cities.html">City Hotspots</a>
+                    <a href="district_analysis.html">District Analysis</a> 
                 </div>
             </div>
             <a href="about.html">About</a>
@@ -113,6 +142,7 @@
                 <p style="font-size: 14px; color: #555;">Major Metropolitan Cities</p>
             </div>
         </div>
+
         <div class="sources-section">
             <h3>Data Sources (National Crime Records Bureau - NCRB)</h3>
             <ul>
@@ -121,6 +151,7 @@
                 <li><a href="https://www.data.gov.in/resource/crime-head-wise-number-voilent-crimes-metropolitan-cities-during-2022" target="_blank">Crime Head-wise Number of Violent Crimes in Metropolitan Cities (2022)</a></li>
             </ul>
         </div>
-        </div>
+
+    </div>
 </body>
 </html>

@@ -19,22 +19,10 @@
         .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; }
         .dropdown-content a:hover { background: #e0e0e0; }
         .dropdown:hover .dropdown-content { display: block; }
-        .dashboard-container { padding: 40px; max-width: 1200px; margin: 0 auto; }
         
-        .chart-card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); 
-            height: 600px; 
-            position: relative;
-        }
-        
-        .chart-card canvas {
-            max-height: 100%; 
-        }
-
-        .chart-card h4 { color: #1a237e; font-size: 24px; margin-top: 0; padding-bottom: 10px; border-bottom: 2px solid #a5d6a7; text-align: center; }
+        .dashboard-container { padding: 20px; max-width: 1000px; margin: 20px auto; background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); }
+        .chart-area { height: 450px; }
+        h2 { color: #1a237e; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-top: 0; font-size: 24px; text-align: center; }
     </style>
 </head>
 <body>
@@ -46,8 +34,9 @@
                 <button class="dropbtn">Analytics ▼</button>
                 <div class="dropdown-content">
                     <a href="yearly_trend.html">Crime Trend (Yearly)</a>
-                    <a href="top_crimes.html">Top Crime Types</a>
+                    <a href="top_crimes.html" style="background: #e0e0e0; color: #1a237e; font-weight: bold;">Top Crime Types</a>
                     <a href="top_cities.html">City Hotspots</a>
+                    <a href="district_analysis.html">District Analysis</a> 
                 </div>
             </div>
             <a href="about.html">About</a>
@@ -55,53 +44,60 @@
     </div>
 
     <div class="dashboard-container">
-        <div class="chart-card">
-            <h4>Top 10 Most Frequent Violent Crimes (Total Incidents)</h4>
-            <canvas id="crimeTypesChart"></canvas>
+        <h2>Top 10 Most Frequent IPC Crime Types (2022)</h2>
+        <div class="chart-area">
+            <canvas id="topCrimesChart"></canvas>
         </div>
+        <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
+            This chart displays the crime types with the highest incidence across the metropolitan cities.
+        </p>
     </div>
 
     <script>
-        // --- YOUR CALCULATED TOP CRIMES DATA ---
-        const TOP_CRIMES_DATA = [
-            { label: 'Kidnapping and Abduction', count: 13984 },
-            { label: 'Robbery', count: 5554 },
-            { label: 'Grievous Hurt', count: 4793 },
-            { label: 'Rape', count: 3633 },
-            { label: 'Attempt to Commit Murder', count: 3592 },
-            { label: 'Murder', count: 2031 },
-            { label: 'Rioting', count: 1399 },
-            { label: 'Attempt to Commit Culpable Homicide', count: 1057 },
-            { label: 'Arson', count: 419 },
-            { label: 'Dowry Deaths', count: 381 }
-        ];
+        // Mock data simulating the top crime types (IPC)
+        const topCrimesData = [
+            { crime: 'Kidnapping & Abduction', count: 13984 },
+            { crime: 'Rape', count: 3236 },
+            { crime: 'Attempt to Commit Murder', count: 1254 },
+            { crime: 'Robbery', count: 1845 },
+            { crime: 'Dowry Deaths', count: 329 },
+            { crime: 'Rioting', count: 1224 },
+            { crime: 'Assault on Women', count: 3658 },
+            { crime: 'Cruelty by Husband/Relatives', count: 11053 },
+            { crime: 'Theft/Burglary (Simplified)', count: 220150 }, 
+            { crime: 'Cheating', count: 35600 } 
+        ].sort((a, b) => b.count - a.count);
 
         function renderChart() {
-            // *** CHANGE MADE HERE: Sorting descending (b.count - a.count) to place highest bar at the top ***
-            const sortedData = [...TOP_CRIMES_DATA].sort((a, b) => b.count - a.count);
+            const labels = topCrimesData.map(d => d.crime);
+            const dataCounts = topCrimesData.map(d => d.count);
 
-            const CHART_COLORS = ['rgba(26, 35, 126, 0.8)'];
+            const BACKGROUND_COLORS = [
+                '#e74c3c', '#c0392b', '#9b59b6', '#8e44ad', '#3498db',
+                '#2980b9', '#1abc9c', '#16a085', '#2ecc71', '#27ae60'
+            ];
 
-            const crimeCtx = document.getElementById('crimeTypesChart').getContext('2d');
-            new Chart(crimeCtx, {
+            const ctx = document.getElementById('topCrimesChart').getContext('2d');
+            
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: sortedData.map(c => c.label),
+                    labels: labels,
                     datasets: [{
-                        label: 'Number of Incidents',
-                        data: sortedData.map(c => c.count),
-                        backgroundColor: CHART_COLORS[0],
-                        borderColor: CHART_COLORS[0].replace('0.8', '1'),
+                        label: 'Total Incidents',
+                        data: dataCounts,
+                        backgroundColor: BACKGROUND_COLORS,
+                        borderColor: '#333',
                         borderWidth: 1
                     }]
                 },
                 options: {
-                    indexAxis: 'y', // Makes it a horizontal bar chart
                     responsive: true,
-                    maintainAspectRatio: false, 
-                    scales: { 
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bars
+                    scales: {
                         x: { 
-                            beginAtZero: true,
+                            beginAtZero: true, 
                             title: {
                                 display: true,
                                 text: 'Total Incidents',

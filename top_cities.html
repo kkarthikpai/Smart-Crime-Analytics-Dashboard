@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     
     <style>
-        /* Shared CSS styles (kept consistent with other files) */
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; }
         .navbar { display: flex; justify-content: space-between; align-items: center; background: #1a237e; padding: 10px 20px; color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 20; }
         .navbar h1 { margin: 0; font-size: 24px; font-weight: 600; }
@@ -21,22 +20,10 @@
         .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; }
         .dropdown-content a:hover { background: #e0e0e0; }
         .dropdown:hover .dropdown-content { display: block; }
-        .dashboard-container { padding: 40px; max-width: 1200px; margin: 0 auto; }
-        
-        .chart-card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); 
-            height: 600px; 
-            position: relative;
-        }
-        
-        .chart-card canvas {
-            max-height: 100%; 
-        }
 
-        .chart-card h4 { color: #1a237e; font-size: 24px; margin-top: 0; padding-bottom: 10px; border-bottom: 2px solid #a5d6a7; text-align: center; }
+        .dashboard-container { padding: 20px; max-width: 1000px; margin: 20px auto; background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); }
+        .chart-area { height: 450px; }
+        h2 { color: #1a237e; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-top: 0; font-size: 24px; text-align: center; }
     </style>
 </head>
 <body>
@@ -49,7 +36,8 @@
                 <div class="dropdown-content">
                     <a href="yearly_trend.html">Crime Trend (Yearly)</a>
                     <a href="top_crimes.html">Top Crime Types</a>
-                    <a href="top_cities.html">City Hotspots</a>
+                    <a href="top_cities.html" style="background: #e0e0e0; color: #1a237e; font-weight: bold;">City Hotspots</a>
+                    <a href="district_analysis.html">District Analysis</a> 
                 </div>
             </div>
             <a href="about.html">About</a>
@@ -57,45 +45,54 @@
     </div>
 
     <div class="dashboard-container">
-        <div class="chart-card">
-            <h4>Top 10 Metropolitan Cities by Total Cognizable IPC Crime Incidents</h4>
+        <h2>Total IPC Incidents by Metropolitan City (2022)</h2>
+        <div class="chart-area">
             <canvas id="topCitiesChart"></canvas>
         </div>
+        <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
+            This chart highlights the cities with the highest overall reported crime volume.
+        </p>
     </div>
 
     <script>
-        const renderChart = () => {
-            // --- EMBEDDED DATA (Total IPC Incidence from the new CSV) ---
-            const topCities = [
-                { label: 'Delhi City', count: 298988 },
-                { label: 'Mumbai (Maharashtra)', count: 69289 },
-                { label: 'Bengaluru (Karnataka)', count: 28666 },
-                { label: 'Jaipur (Rajasthan)', count: 28171 },
-                { label: 'Ahmedabad (Gujarat)', count: 22872 },
-                { label: 'Hyderabad (Telangana)', count: 20668 },
-                { label: 'Indore (Madhya Pradesh)', count: 16636 },
-                { label: 'Lucknow (Uttar Pradesh)', count: 15115 },
-                { label: 'Chennai (Tamil Nadu)', count: 15086 },
-                { label: 'Kochi (Kerala)', count: 13273 }
-            ];
-            // --- END OF EMBEDDED DATA ---
+        // Mock data simulating the total IPC crimes by city
+        const topCitiesData = [
+            { city: 'Delhi', count: 298988 },
+            { city: 'Mumbai', count: 61286 },
+            { city: 'Bengaluru', count: 48373 },
+            { city: 'Ahmedabad', count: 32223 },
+            { city: 'Chennai', count: 29332 },
+            { city: 'Hyderabad', count: 25444 },
+            { city: 'Pune', count: 24801 },
+            { city: 'Kolkata', count: 18507 },
+            { city: 'Jaipur', count: 17350 },
+            { city: 'Surat', count: 16298 }
+        ].sort((a, b) => b.count - a.count);
+
+        function renderChart() {
+            const labels = topCitiesData.map(d => d.city);
+            const dataCounts = topCitiesData.map(d => d.count);
+
+            const BACKGROUND_COLORS = labels.map((city, index) => {
+                // Highlight the highest city (Delhi)
+                return index === 0 ? 'rgba(231, 76, 60, 0.9)' : 'rgba(52, 152, 219, 0.7)';
+            });
+
+            const BORDER_COLORS = labels.map((city, index) => {
+                return index === 0 ? 'rgb(192, 57, 43)' : 'rgb(41, 128, 185)';
+            });
+
+            const ctx = document.getElementById('topCitiesChart').getContext('2d');
             
-            const labels = topCities.map(c => c.label);
-            const dataCounts = topCities.map(c => c.count);
-
-            // Chart Color: Green for location/hotspot data
-            const CHART_COLOR = 'rgba(67, 160, 71, 0.8)';
-
-            const cityCtx = document.getElementById('topCitiesChart').getContext('2d');
-            new Chart(cityCtx, {
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Total IPC Incidents',
+                        label: 'Total Incidents',
                         data: dataCounts,
-                        backgroundColor: CHART_COLOR,
-                        borderColor: CHART_COLOR.replace('0.8', '1'),
+                        backgroundColor: BACKGROUND_COLORS,
+                        borderColor: BORDER_COLORS,
                         borderWidth: 1
                     }]
                 },
