@@ -15,3 +15,6 @@ The Smart Crime Analytics Dashboard project aims to shift law enforcement toward
 ## Contributors
 
 * K Karthik Pai
+* Ajay Bhat
+* Sanjeev N M
+* PVPK Karthik
