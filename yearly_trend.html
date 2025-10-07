@@ -45,22 +45,21 @@
     </div>
 
     <div class="dashboard-container">
-        <h2>Violent Crime Trend in Metropolitan Cities (2019 - 2022)</h2>
+        <h2>Violent Crime Trend in Metropolitan Cities (2019 - 2021)</h2>
         <div class="chart-area">
             <canvas id="yearlyTrendChart"></canvas>
         </div>
         <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
-            This chart tracks the total number of violent incidents reported across the 19 major metropolitan cities over a four-year period.
+            This chart tracks the total number of violent incidents reported across the 19 major metropolitan cities over a three-year period.
         </p>
     </div>
 
     <script>
         // Mock data simulating the total violent crimes by year for all 19 cities
         const yearlyTrendData = [
-            { year: 2019, count: 41411 },
-            { year: 2020, count: 39512 },
-            { year: 2021, count: 43414 },
-            { year: 2022, count: 45451 }
+            { year: 2019, count: 38645 },
+            { year: 2020, count: 31325 },
+            { year: 2021, count: 35572 }
         ];
 
         function renderChart() {

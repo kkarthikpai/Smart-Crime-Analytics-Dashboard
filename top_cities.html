@@ -49,38 +49,54 @@
         <div class="chart-area">
             <canvas id="topCitiesChart"></canvas>
         </div>
-        <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
-            This chart highlights the cities with the highest overall reported crime volume.
-        </p>
-    </div>
+        </div>
 
     <script>
-        // Mock data simulating the total IPC crimes by city
+        // Red/Maroon gradient colors (Darkest to Lightest for Top 10)
+        const RED_GRADIENT_COLORS = [
+            'rgba(136, 0, 0, 0.9)',   // 1. Darkest
+            'rgba(150, 15, 15, 0.9)', 
+            'rgba(165, 30, 30, 0.9)', 
+            'rgba(180, 45, 45, 0.9)', 
+            'rgba(195, 60, 60, 0.9)', 
+            'rgba(210, 75, 75, 0.9)', 
+            'rgba(225, 90, 90, 0.9)', 
+            'rgba(240, 105, 105, 0.9)', 
+            'rgba(255, 120, 120, 0.9)',
+            'rgba(255, 135, 135, 0.9)'  // 10. Lightest
+        ];
+        // Border colors are the same shades but full opacity
+        const BORDER_GRADIENT_COLORS = RED_GRADIENT_COLORS.map(c => c.replace('0.9', '1'));
+
+        // Updated data for all metropolitan cities (new data from uploaded file)
         const topCitiesData = [
             { city: 'Delhi', count: 298988 },
-            { city: 'Mumbai', count: 61286 },
-            { city: 'Bengaluru', count: 48373 },
-            { city: 'Ahmedabad', count: 32223 },
-            { city: 'Chennai', count: 29332 },
-            { city: 'Hyderabad', count: 25444 },
-            { city: 'Pune', count: 24801 },
-            { city: 'Kolkata', count: 18507 },
-            { city: 'Jaipur', count: 17350 },
-            { city: 'Surat', count: 16298 }
+            { city: 'Mumbai', count: 69289 },
+            { city: 'Bengaluru', count: 28666 },
+            { city: 'Jaipur', count: 28171 },
+            { city: 'Ahmedabad', count: 22872 },
+            { city: 'Hyderabad', count: 20668 },
+            { city: 'Indore', count: 16636 },
+            { city: 'Lucknow', count: 15115 },
+            { city: 'Chennai', count: 15086 },
+            { city: 'Kochi', count: 13273 },
+            { city: 'Nagpur', count: 12889 },
+            { city: 'Patna', count: 12522 },
+            { city: 'Kanpur', count: 11721 },
+            { city: 'Pune', count: 11074 },
+            { city: 'Kolkata', count: 11038 },
+            { city: 'Surat', count: 9872 },
+            { city: 'Ghaziabad', count: 9860 },
+            { city: 'Kozhikode', count: 8074 },
+            { city: 'Coimbatore', count: 4542 }
         ].sort((a, b) => b.count - a.count);
 
         function renderChart() {
-            const labels = topCitiesData.map(d => d.city);
-            const dataCounts = topCitiesData.map(d => d.count);
+            // Only take the top 10 cities for the chart
+            const top10CitiesData = topCitiesData.slice(0, 10);
 
-            const BACKGROUND_COLORS = labels.map((city, index) => {
-                // Highlight the highest city (Delhi)
-                return index === 0 ? 'rgba(231, 76, 60, 0.9)' : 'rgba(52, 152, 219, 0.7)';
-            });
-
-            const BORDER_COLORS = labels.map((city, index) => {
-                return index === 0 ? 'rgb(192, 57, 43)' : 'rgb(41, 128, 185)';
-            });
+            const labels = top10CitiesData.map(d => d.city);
+            const dataCounts = top10CitiesData.map(d => d.count);
 
             const ctx = document.getElementById('topCitiesChart').getContext('2d');
             
@@ -91,21 +107,23 @@
                     datasets: [{
                         label: 'Total Incidents',
                         data: dataCounts,
-                        backgroundColor: BACKGROUND_COLORS,
-                        borderColor: BORDER_COLORS,
+                        // Use the gradient colors
+                        backgroundColor: RED_GRADIENT_COLORS,
+                        borderColor: BORDER_GRADIENT_COLORS,
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    indexAxis: 'y', // Horizontal bar chart
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { 
+                        x: { // X-axis is now for counts
                             beginAtZero: true,
-                            title: { display: true, text: 'Total Incidents' }
+                            title: { display: true, text: 'Total Incidents', font: { size: 14 } }
                         },
-                        x: {
-                            title: { display: true, text: 'City' }
+                        y: { // Y-axis is now for cities
+                            title: { display: true, text: 'City', font: { size: 14 } }
                         }
                     },
                     plugins: { 
@@ -117,8 +135,9 @@
                                     if (label) {
                                         label += ': ';
                                     }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y.toLocaleString();
+                                    // Check context.parsed.x for horizontal chart
+                                    if (context.parsed.x !== null) {
+                                        label += context.parsed.x.toLocaleString();
                                     }
                                     return label;
                                 }

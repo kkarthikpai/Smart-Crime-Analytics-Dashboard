@@ -19,9 +19,9 @@
         .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; }
         .dropdown-content a:hover { background: #e0e0e0; }
         .dropdown:hover .dropdown-content { display: block; }
-        
+
         .dashboard-container { padding: 20px; max-width: 1000px; margin: 20px auto; background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); }
-        .chart-area { height: 450px; }
+        .chart-area { height: 600px; }
         h2 { color: #1a237e; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-top: 0; font-size: 24px; text-align: center; }
     </style>
 </head>
@@ -44,62 +44,87 @@
     </div>
 
     <div class="dashboard-container">
-        <h2>Top 10 Most Frequent IPC Crime Types (2022)</h2>
+        <h2>Top 10 Violent Crime Types</h2>
         <div class="chart-area">
             <canvas id="topCrimesChart"></canvas>
         </div>
-        <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
-            This chart displays the crime types with the highest incidence across the metropolitan cities.
-        </p>
     </div>
 
     <script>
-        // Mock data simulating the top crime types (IPC)
-        const topCrimesData = [
-            { crime: 'Kidnapping & Abduction', count: 13984 },
-            { crime: 'Rape', count: 3236 },
-            { crime: 'Attempt to Commit Murder', count: 1254 },
-            { crime: 'Robbery', count: 1845 },
-            { crime: 'Dowry Deaths', count: 329 },
-            { crime: 'Rioting', count: 1224 },
-            { crime: 'Assault on Women', count: 3658 },
-            { crime: 'Cruelty by Husband/Relatives', count: 11053 },
-            { crime: 'Theft/Burglary (Simplified)', count: 220150 }, 
-            { crime: 'Cheating', count: 35600 } 
-        ].sort((a, b) => b.count - a.count);
+        // Data for the 15 violent crime types (kept all 15 for sorting logic, but only top 10 are used)
+        const crimeData = [
+            { crime: "Kidnapping and Abduction", incidents: 13984 },
+            { crime: "Robbery", incidents: 5554 },
+            { crime: "Grievous Hurt", incidents: 4793 },
+            { crime: "Rape", incidents: 3633 },
+            { crime: "Attempt to Commit Murder", incidents: 3592 },
+            { crime: "Murder", incidents: 2031 },
+            { crime: "Rioting", incidents: 1399 },
+            { crime: "Attempt to Commit Culpable Homicide", incidents: 1057 },
+            { crime: "Arson", incidents: 419 },
+            { crime: "Dowry Deaths", incidents: 381 },
+            { crime: "Culpable Homicide not amounting to Murder", incidents: 273 },
+            { crime: "Dacoity", incidents: 183 },
+            { crime: "Attempt to Commit Rape", incidents: 39 },
+            { crime: "Foeticide", incidents: 16 },
+            { crime: "Infanticide", incidents: 13 }
+        ];
+
+        // Red/Maroon gradient colors (Darkest to Lightest for Top 10)
+        const RED_GRADIENT_COLORS = [
+            'rgba(136, 0, 0, 0.9)',   // 1. Darkest
+            'rgba(150, 15, 15, 0.9)', 
+            'rgba(165, 30, 30, 0.9)', 
+            'rgba(180, 45, 45, 0.9)', 
+            'rgba(195, 60, 60, 0.9)', 
+            'rgba(210, 75, 75, 0.9)', 
+            'rgba(225, 90, 90, 0.9)', 
+            'rgba(240, 105, 105, 0.9)', 
+            'rgba(255, 120, 120, 0.9)',
+            'rgba(255, 135, 135, 0.9)'  // 10. Lightest
+        ];
+        // Border colors are the same shades but full opacity
+        const BORDER_GRADIENT_COLORS = RED_GRADIENT_COLORS.map(c => c.replace('0.9', '1'));
+
 
         function renderChart() {
-            const labels = topCrimesData.map(d => d.crime);
-            const dataCounts = topCrimesData.map(d => d.count);
-
-            const BACKGROUND_COLORS = [
-                '#e74c3c', '#c0392b', '#9b59b6', '#8e44ad', '#3498db',
-                '#2980b9', '#1abc9c', '#16a085', '#2ecc71', '#27ae60'
-            ];
-
-            const ctx = document.getElementById('topCrimesChart').getContext('2d');
+            // Sort data in DESCENDING order to place the highest bar at the top of the horizontal chart.
+            const sortedData = crimeData.sort((a, b) => b.incidents - a.incidents);
             
-            new Chart(ctx, {
+            // FILTER: Keep only the top 10 crimes
+            const top10Data = sortedData.slice(0, 10);
+
+            const labels = top10Data.map(d => d.crime);
+            const dataCounts = top10Data.map(d => d.incidents);
+
+            // Assign the gradient colors directly, since the data is already sorted from highest (index 0) to lowest (index 9)
+            const backgroundColors = RED_GRADIENT_COLORS;
+            const borderColors = BORDER_GRADIENT_COLORS;
+
+
+            const chartCtx = document.getElementById('topCrimesChart').getContext('2d');
+            
+            new Chart(chartCtx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
                         label: 'Total Incidents',
                         data: dataCounts,
-                        backgroundColor: BACKGROUND_COLORS,
-                        borderColor: '#333',
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    indexAxis: 'y', // Horizontal bar chart
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y', // Horizontal bars
                     scales: {
                         x: { 
                             beginAtZero: true, 
-                            title: {
-                                display: true,
+                            title: { 
+                                display: true, 
                                 text: 'Total Incidents',
                                 font: { size: 14 }
                             }
