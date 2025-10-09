@@ -4,25 +4,240 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Crime Types - Dashboard</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <style>
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1a237e; padding: 10px 20px; color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 20; }
-        .navbar h1 { margin: 0; font-size: 24px; font-weight: 600; }
-        .nav-links { display: flex; gap: 25px; }
-        .nav-links a { color: white; text-decoration: none; font-size: 16px; transition: color 0.3s; }
-        .nav-links a:hover { color: #a5d6a7; }
-        .dropdown { position: relative; display: inline-block; }
-        .dropbtn { background: none; border: none; color: white; font-size: 16px; cursor: pointer; padding: 0; }
-        .dropdown-content { display: none; position: absolute; background: white; min-width: 200px; box-shadow: 0px 8px 16px rgba(0,0,0,0.2); z-index: 10; right: 0; }
-        .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; }
-        .dropdown-content a:hover { background: #e0e0e0; }
-        .dropdown:hover .dropdown-content { display: block; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        /* Navbar - Same styling */
+        /* FIXED NAVBAR CSS - Replace the navbar/dropdown CSS in ALL your HTML files with this */
 
-        .dashboard-container { padding: 20px; max-width: 1000px; margin: 20px auto; background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); }
-        .chart-area { height: 600px; }
-        h2 { color: #1a237e; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-top: 0; font-size: 24px; text-align: center; }
+.navbar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background: rgba(26, 35, 126, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 16px 40px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar h1 { 
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 0%, #a5d6a7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.nav-links { 
+    display: flex; 
+    gap: 30px; 
+    align-items: center; 
+}
+
+.nav-links a { 
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.nav-links a:hover { 
+    color: #a5d6a7;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.nav-links .active {
+    color: #a5d6a7;
+    background: rgba(165, 214, 167, 0.15);
+    font-weight: 600;
+}
+
+/* FIXED DROPDOWN - This is the key fix */
+.dropdown { 
+    position: relative; 
+    display: inline-block;
+}
+
+/* Invisible bridge to prevent dropdown from closing */
+.dropdown::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 10px; /* Creates a bridge between button and menu */
+    background: transparent;
+}
+
+.dropbtn { 
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.dropbtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #a5d6a7;
+}
+
+.dropdown-content { 
+    display: none;
+    position: absolute;
+    background: white;
+    min-width: 220px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    right: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 8px; /* Gap between button and dropdown */
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-content a { 
+    color: #333;
+    padding: 14px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.dropdown-content a:hover { 
+    background: #f5f7fa;
+    padding-left: 24px;
+}
+
+.dropdown-content .active-dropdown {
+    background: #e8f5e9;
+    color: #1a237e;
+    font-weight: 600;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content { 
+    display: block; 
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+    
+    .navbar h1 {
+        font-size: 22px;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+}
+        
+        .dashboard-container { 
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-area { height: 650px; }
+        
+        h2 { 
+            color: #1a237e;
+            padding-bottom: 16px;
+            margin-bottom: 32px;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            border-bottom: 4px solid #a5d6a7;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: #1a237e;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px 20px;
+            }
+            
+            .navbar h1 {
+                font-size: 22px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+            }
+            
+            .chart-card {
+                padding: 24px;
+            }
+            
+            .chart-area {
+                height: 450px;
+            }
+            
+            h2 {
+                font-size: 22px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -34,7 +249,7 @@
                 <button class="dropbtn">Analytics ▼</button>
                 <div class="dropdown-content">
                     <a href="yearly_trend.html">Crime Trend (Yearly)</a>
-                    <a href="top_crimes.html" style="background: #e0e0e0; color: #1a237e; font-weight: bold;">Top Crime Types</a>
+                    <a href="top_crimes.html" class="active-dropdown">Top Crime Types</a>
                     <a href="top_cities.html">City Hotspots</a>
                     <a href="district_analysis.html">District Analysis</a> 
                 </div>
@@ -44,14 +259,15 @@
     </div>
 
     <div class="dashboard-container">
-        <h2>Top 10 Violent Crime Types</h2>
-        <div class="chart-area">
-            <canvas id="topCrimesChart"></canvas>
+        <div class="chart-card">
+            <h2>Top 10 Violent Crime Types</h2>
+            <div class="chart-area">
+                <canvas id="topCrimesChart"></canvas>
+            </div>
         </div>
     </div>
 
     <script>
-        // Data for the 15 violent crime types (kept all 15 for sorting logic, but only top 10 are used)
         const crimeData = [
             { crime: "Kidnapping and Abduction", incidents: 13984 },
             { crime: "Robbery", incidents: 5554 },
@@ -70,9 +286,8 @@
             { crime: "Infanticide", incidents: 13 }
         ];
 
-        // Red/Maroon gradient colors (Darkest to Lightest for Top 10)
         const RED_GRADIENT_COLORS = [
-            'rgba(136, 0, 0, 0.9)',   // 1. Darkest
+            'rgba(136, 0, 0, 0.9)',
             'rgba(150, 15, 15, 0.9)', 
             'rgba(165, 30, 30, 0.9)', 
             'rgba(180, 45, 45, 0.9)', 
@@ -81,26 +296,16 @@
             'rgba(225, 90, 90, 0.9)', 
             'rgba(240, 105, 105, 0.9)', 
             'rgba(255, 120, 120, 0.9)',
-            'rgba(255, 135, 135, 0.9)'  // 10. Lightest
+            'rgba(255, 135, 135, 0.9)'
         ];
-        // Border colors are the same shades but full opacity
+        
         const BORDER_GRADIENT_COLORS = RED_GRADIENT_COLORS.map(c => c.replace('0.9', '1'));
 
-
         function renderChart() {
-            // Sort data in DESCENDING order to place the highest bar at the top of the horizontal chart.
             const sortedData = crimeData.sort((a, b) => b.incidents - a.incidents);
-            
-            // FILTER: Keep only the top 10 crimes
             const top10Data = sortedData.slice(0, 10);
-
             const labels = top10Data.map(d => d.crime);
             const dataCounts = top10Data.map(d => d.incidents);
-
-            // Assign the gradient colors directly, since the data is already sorted from highest (index 0) to lowest (index 9)
-            const backgroundColors = RED_GRADIENT_COLORS;
-            const borderColors = BORDER_GRADIENT_COLORS;
-
 
             const chartCtx = document.getElementById('topCrimesChart').getContext('2d');
             
@@ -111,45 +316,72 @@
                     datasets: [{
                         label: 'Total Incidents',
                         data: dataCounts,
-                        backgroundColor: backgroundColors,
-                        borderColor: borderColors,
-                        borderWidth: 1
+                        backgroundColor: RED_GRADIENT_COLORS,
+                        borderColor: BORDER_GRADIENT_COLORS,
+                        borderWidth: 2,
+                        borderRadius: 8
                     }]
                 },
                 options: {
-                    indexAxis: 'y', // Horizontal bar chart
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
                         x: { 
-                            beginAtZero: true, 
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 13
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            },
                             title: { 
                                 display: true, 
                                 text: 'Total Incidents',
-                                font: { size: 14 }
+                                font: { 
+                                    size: 14,
+                                    weight: '600'
+                                }
                             }
                         },
                         y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            },
                             title: {
                                 display: true,
                                 text: 'Crime Type',
-                                font: { size: 14 }
+                                font: { 
+                                    size: 14,
+                                    weight: '600'
+                                }
                             }
                         }
                     },
                     plugins: { 
                         legend: { display: false },
                         tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
                             callbacks: {
                                 label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.x !== null) {
-                                        label += context.parsed.x.toLocaleString(); // Add comma separators
-                                    }
-                                    return label;
+                                    return 'Incidents: ' + context.parsed.x.toLocaleString();
                                 }
                             }
                         }
